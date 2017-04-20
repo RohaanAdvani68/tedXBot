@@ -78,12 +78,14 @@ def storeUser(userid, db, dbuser):
     return b
 
 def removeUser(userid, db, dbuser):
-    '''Takes a userid (from the facebook graph api) an initialised firebase
+    '''Takes a userid (from the facebook graph api) and an initialised firebase
     database and an authenticated firebase user as an input, and removes the user from the database.'''
     if db.get(dbuser['idToken']).val().has_key(userid):
         db.child(userid).remove(dbuser['idToken'])
+        return True
     else:
         print "User does not exist."
+        return False
 
 def refreshUserToken(auth, dbuser):
 	'''Firebase user idTokens expire in 1 hour. This function refreshes our token and returns the dbuser with refreshed token.
@@ -107,4 +109,4 @@ def getAllUsers(db, dbuser):
 def getUser(userid, db, dbuser):
 	'''Get particular user from firebase database.'''
 	allusers = db.get(dbuser['idToken']).val()
-	return allusers[userid]
+	return allusers.get(userid, False)
